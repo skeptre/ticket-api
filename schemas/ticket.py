@@ -1,12 +1,207 @@
+# Imports the datetime class so we can type fields like created_at and updated_at
 from datetime import datetime
 
-from pydantic import BaseModel
+# Imports Enum so we can restrict values to a fixed set of choices
+from enum import Enum
 
-class Ticket(BaseModel):
+# Imports Pydantic tools for creating and validating API schemas
+from pydantic import BaseModel, Field, ConfigDict, model_validator
+
+
+# Defines the allowed status values for a ticket
+class TicketStatus(str, Enum):
+    # Ticket has been created but no one is working on it yet
+    OPEN = "open"
+
+    # Ticket is currently being handled
+    IN_PROGRESS = "in_progress"
+
+    # Ticket has been solved
+    RESOLVED = "resolved"
+
+    # Ticket has been closed and should no longer be active
+    CLOSED = "closed"
+
+
+# Defines the allowed priority values for a ticket
+class TicketPriority(str, Enum):
+    # Lowest priority ticket
+    LOW = "low"
+
+    # Default normal priority ticket
+    MEDIUM = "medium"
+
+    # Important ticket that should be handled sooner
+    HIGH = "high"
+
+    # Most urgent ticket that needs fast attention
+    URGENT = "urgent"
+
+
+# Schema used when a client creates a new ticket
+class TicketCreate(BaseModel):
+    # Required ticket title with validation rules
+    title: str = Field(
+        # Title must be at least 3 characters long
+        min_length=3,
+
+        # Title cannot be longer than 100 characters
+        max_length=100,
+
+        # Description shown in the automatic FastAPI docs
+        description="Short title describing the issue",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["Cannot log in"],
+    )
+
+    # Required ticket description with validation rules
+    description: str = Field(
+        # Description must be at least 10 characters long
+        min_length=10,
+
+        # Description cannot be longer than 2000 characters
+        max_length=2000,
+
+        # Description shown in the automatic FastAPI docs
+        description="Detailed description of the support issue",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["I am unable to log in even though my password is correct."],
+    )
+
+    # Optional priority field with a default value of medium
+    priority: TicketPriority = Field(
+        # If the client does not send priority, use medium
+        default=TicketPriority.MEDIUM,
+
+        # Description shown in the automatic FastAPI docs
+        description="Priority level of the ticket",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["medium"],
+    )
+
+
+# Schema used when a client updates an existing ticket
+class TicketUpdate(BaseModel):
+    # Optional updated title
+    title: str | None = Field(
+        # Default is None because the client does not have to update the title
+        default=None,
+
+        # If title is provided, it must be at least 3 characters long
+        min_length=3,
+
+        # If title is provided, it cannot be longer than 100 characters
+        max_length=100,
+
+        # Description shown in the automatic FastAPI docs
+        description="Updated ticket title",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["Cannot log in to dashboard"],
+    )
+
+    # Optional updated description
+    description: str | None = Field(
+        # Default is None because the client does not have to update the description
+        default=None,
+
+        # If description is provided, it must be at least 10 characters long
+        min_length=10,
+
+        # If description is provided, it cannot be longer than 2000 characters
+        max_length=2000,
+
+        # Description shown in the automatic FastAPI docs
+        description="Updated detailed description of the issue",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["I cannot log in to the dashboard after resetting my password."],
+    )
+
+    # Optional updated status
+    status: TicketStatus | None = Field(
+        # Default is None because the client does not have to update the status
+        default=None,
+
+        # Description shown in the automatic FastAPI docs
+        description="Updated ticket status",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["in_progress"],
+    )
+
+    # Optional updated priority
+    priority: TicketPriority | None = Field(
+        # Default is None because the client does not have to update the priority
+        default=None,
+
+        # Description shown in the automatic FastAPI docs
+        description="Updated ticket priority",
+
+        # Example value shown in the automatic FastAPI docs
+        examples=["high"],
+    )
+
+    # Runs validation after Pydantic has checked the individual fields
+    @model_validator(mode="after")
+    def validate_at_least_one_field(self):
+        # Checks whether every update field was left empty
+        if (
+            self.title is None
+            and self.description is None
+            and self.status is None
+            and self.priority is None
+        ):
+            # Rejects empty update requests because PATCH with no changes is pointless
+            raise ValueError("At least one field must be provided for update")
+
+        # Returns the validated object if at least one field was provided
+        return self
+
+
+# Schema used when returning a ticket from the API
+class TicketResponse(BaseModel):
+    # Unique ticket ID generated by the database
     id: int
+
+    # Ticket title returned to the client
     title: str
+
+    # Ticket description returned to the client
     description: str
-    status: str
-    priority: str
+
+    # Ticket status returned to the client
+    status: TicketStatus
+
+    # Ticket priority returned to the client
+    priority: TicketPriority
+
+    # ID of the user who owns/created the ticket
+    owner_id: int
+
+    # Timestamp for when the ticket was created
     created_at: datetime
+
+    # Timestamp for when the ticket was last updated
     updated_at: datetime
+
+    # Allows Pydantic to build this response from ORM/database model objects
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Schema used when returning a paginated list of tickets
+class TicketListResponse(BaseModel):
+    # List of ticket response objects
+    items: list[TicketResponse]
+
+    # Total number of tickets matching the query
+    total: int
+
+    # Current page number
+    page: int
+
+    # Maximum number of tickets returned per page
+    limit: int
