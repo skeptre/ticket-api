@@ -2,14 +2,14 @@
 from datetime import datetime
 
 # Imports Enum so we can restrict values to a fixed set of choices
-from enum import Enum
+from enum import StrEnum
 
 # Imports Pydantic tools for creating and validating API schemas
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 # Defines the allowed status values for a ticket
-class TicketStatus(str, Enum):
+class TicketStatus(StrEnum):
     # Ticket has been created but no one is working on it yet
     OPEN = "open"
 
@@ -24,7 +24,7 @@ class TicketStatus(str, Enum):
 
 
 # Defines the allowed priority values for a ticket
-class TicketPriority(str, Enum):
+class TicketPriority(StrEnum):
     # Lowest priority ticket
     LOW = "low"
 
