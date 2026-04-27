@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true
+}
