@@ -1,4 +1,8 @@
 *.xml
 *.iml
 .idea
-
+__pycache__
+*.pyc
+.DS_Store
+.venv
+.env
