@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import Enum
 
 # Imports Pydantic tools for creating and validating API schemas
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 # Defines the allowed status values for a ticket
@@ -44,13 +44,10 @@ class TicketCreate(BaseModel):
     title: str = Field(
         # Title must be at least 3 characters long
         min_length=3,
-
         # Title cannot be longer than 100 characters
         max_length=100,
-
         # Description shown in the automatic FastAPI docs
         description="Short title describing the issue",
-
         # Example value shown in the automatic FastAPI docs
         examples=["Cannot log in"],
     )
@@ -59,13 +56,10 @@ class TicketCreate(BaseModel):
     description: str = Field(
         # Description must be at least 10 characters long
         min_length=10,
-
         # Description cannot be longer than 2000 characters
         max_length=2000,
-
         # Description shown in the automatic FastAPI docs
         description="Detailed description of the support issue",
-
         # Example value shown in the automatic FastAPI docs
         examples=["I am unable to log in even though my password is correct."],
     )
@@ -74,10 +68,8 @@ class TicketCreate(BaseModel):
     priority: TicketPriority = Field(
         # If the client does not send priority, use medium
         default=TicketPriority.MEDIUM,
-
         # Description shown in the automatic FastAPI docs
         description="Priority level of the ticket",
-
         # Example value shown in the automatic FastAPI docs
         examples=["medium"],
     )
@@ -89,16 +81,12 @@ class TicketUpdate(BaseModel):
     title: str | None = Field(
         # Default is None because the client does not have to update the title
         default=None,
-
         # If title is provided, it must be at least 3 characters long
         min_length=3,
-
         # If title is provided, it cannot be longer than 100 characters
         max_length=100,
-
         # Description shown in the automatic FastAPI docs
         description="Updated ticket title",
-
         # Example value shown in the automatic FastAPI docs
         examples=["Cannot log in to dashboard"],
     )
@@ -107,16 +95,12 @@ class TicketUpdate(BaseModel):
     description: str | None = Field(
         # Default is None because the client does not have to update the description
         default=None,
-
         # If description is provided, it must be at least 10 characters long
         min_length=10,
-
         # If description is provided, it cannot be longer than 2000 characters
         max_length=2000,
-
         # Description shown in the automatic FastAPI docs
         description="Updated detailed description of the issue",
-
         # Example value shown in the automatic FastAPI docs
         examples=["I cannot log in to the dashboard after resetting my password."],
     )
@@ -125,10 +109,8 @@ class TicketUpdate(BaseModel):
     status: TicketStatus | None = Field(
         # Default is None because the client does not have to update the status
         default=None,
-
         # Description shown in the automatic FastAPI docs
         description="Updated ticket status",
-
         # Example value shown in the automatic FastAPI docs
         examples=["in_progress"],
     )
@@ -137,10 +119,8 @@ class TicketUpdate(BaseModel):
     priority: TicketPriority | None = Field(
         # Default is None because the client does not have to update the priority
         default=None,
-
         # Description shown in the automatic FastAPI docs
         description="Updated ticket priority",
-
         # Example value shown in the automatic FastAPI docs
         examples=["high"],
     )
