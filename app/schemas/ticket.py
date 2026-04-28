@@ -1,41 +1,11 @@
 # Imports the datetime class so we can type fields like created_at and updated_at
 from datetime import datetime
 
-# Imports Enum so we can restrict values to a fixed set of choices
-from enum import StrEnum
-
 # Imports Pydantic tools for creating and validating API schemas
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
-# Defines the allowed status values for a ticket
-class TicketStatus(StrEnum):
-    # Ticket has been created but no one is working on it yet
-    OPEN = "open"
-
-    # Ticket is currently being handled
-    IN_PROGRESS = "in_progress"
-
-    # Ticket has been solved
-    RESOLVED = "resolved"
-
-    # Ticket has been closed and should no longer be active
-    CLOSED = "closed"
-
-
-# Defines the allowed priority values for a ticket
-class TicketPriority(StrEnum):
-    # Lowest priority ticket
-    LOW = "low"
-
-    # Default normal priority ticket
-    MEDIUM = "medium"
-
-    # Important ticket that should be handled sooner
-    HIGH = "high"
-
-    # Most urgent ticket that needs fast attention
-    URGENT = "urgent"
+# Import enums from models to avoid duplication
+from app.models.ticket import TicketStatus, TicketPriority
 
 
 # Schema used when a client creates a new ticket
