@@ -53,12 +53,12 @@ def test_user(db_session):
     """Create a test user in the database."""
     from app.models.user import User
     from app.security import get_password_hash
-    
+
     user = User(
         email="test@example.com",
         username="testuser",
         hashed_password=get_password_hash("testpassword123"),
-        is_active=True
+        is_active=True,
     )
     db_session.add(user)
     db_session.commit()
@@ -70,8 +70,7 @@ def test_user(db_session):
 def auth_headers(client, test_user):
     """Get authentication headers for test user."""
     response = client.post(
-        "/auth/login",
-        data={"username": "testuser", "password": "testpassword123"}
+        "/auth/login", data={"username": "testuser", "password": "testpassword123"}
     )
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

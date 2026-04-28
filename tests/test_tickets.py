@@ -1,8 +1,3 @@
-from datetime import datetime
-
-from app.schemas.ticket import TicketStatus, TicketPriority
-
-
 def test_get_tickets_empty(client, auth_headers):
     """Test getting tickets when none exist."""
     response = client.get("/tickets/", headers=auth_headers)
@@ -17,9 +12,9 @@ def test_create_ticket(client, auth_headers):
         json={
             "title": "Test Ticket",
             "description": "This is a test ticket",
-            "priority": "high"
+            "priority": "high",
         },
-        headers=auth_headers
+        headers=auth_headers,
     )
     assert response.status_code == 201
     data = response.json()
@@ -36,8 +31,8 @@ def test_create_ticket_unauthorized(client):
         json={
             "title": "Test Ticket",
             "description": "This is a test ticket",
-            "priority": "high"
-        }
+            "priority": "high",
+        },
     )
     assert response.status_code == 401
 
@@ -50,12 +45,12 @@ def test_get_ticket_by_id(client, auth_headers):
         json={
             "title": "Test Ticket",
             "description": "This is a test ticket",
-            "priority": "medium"
+            "priority": "medium",
         },
-        headers=auth_headers
+        headers=auth_headers,
     )
     ticket_id = create_response.json()["id"]
-    
+
     # Then get it
     response = client.get(f"/tickets/{ticket_id}")
     assert response.status_code == 200
@@ -78,20 +73,17 @@ def test_update_ticket(client, auth_headers):
         json={
             "title": "Original Title",
             "description": "Original description",
-            "priority": "low"
+            "priority": "low",
         },
-        headers=auth_headers
+        headers=auth_headers,
     )
     ticket_id = create_response.json()["id"]
-    
+
     # Update the ticket
     response = client.put(
         f"/tickets/{ticket_id}",
-        json={
-            "title": "Updated Title",
-            "status": "in_progress"
-        },
-        headers=auth_headers
+        json={"title": "Updated Title", "status": "in_progress"},
+        headers=auth_headers,
     )
     assert response.status_code == 200
     data = response.json()
@@ -107,16 +99,16 @@ def test_delete_ticket(client, auth_headers):
         json={
             "title": "To Delete",
             "description": "This will be deleted",
-            "priority": "low"
+            "priority": "low",
         },
-        headers=auth_headers
+        headers=auth_headers,
     )
     ticket_id = create_response.json()["id"]
-    
+
     # Delete the ticket
     response = client.delete(f"/tickets/{ticket_id}", headers=auth_headers)
     assert response.status_code == 204
-    
+
     # Verify it's gone
     get_response = client.get(f"/tickets/{ticket_id}")
     assert get_response.status_code == 404

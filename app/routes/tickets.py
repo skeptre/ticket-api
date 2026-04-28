@@ -13,8 +13,7 @@ router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 @router.get("/", response_model=list[TicketResponse])
 def get_tickets(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ) -> list[TicketResponse]:
     """Get all tickets for the current user."""
     tickets = db.query(Ticket).filter(Ticket.owner_id == current_user.id).all()
@@ -25,13 +24,14 @@ def get_tickets(
 def get_ticket(
     ticket_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> TicketResponse:
     """Get a single ticket by ID."""
-    ticket = db.query(Ticket).filter(
-        Ticket.id == ticket_id,
-        Ticket.owner_id == current_user.id
-    ).first()
+    ticket = (
+        db.query(Ticket)
+        .filter(Ticket.id == ticket_id, Ticket.owner_id == current_user.id)
+        .first()
+    )
 
     if not ticket:
         raise HTTPException(
@@ -45,7 +45,7 @@ def get_ticket(
 def create_ticket(
     ticket: TicketCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> TicketResponse:
     """Create a new ticket."""
     new_ticket = Ticket(
@@ -65,13 +65,14 @@ def update_ticket(
     ticket_id: int,
     ticket_update: TicketUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> TicketResponse:
     """Update a ticket by ID."""
-    ticket = db.query(Ticket).filter(
-        Ticket.id == ticket_id,
-        Ticket.owner_id == current_user.id
-    ).first()
+    ticket = (
+        db.query(Ticket)
+        .filter(Ticket.id == ticket_id, Ticket.owner_id == current_user.id)
+        .first()
+    )
 
     if not ticket:
         raise HTTPException(
@@ -93,13 +94,14 @@ def update_ticket(
 def delete_ticket(
     ticket_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> None:
     """Delete a ticket by ID."""
-    ticket = db.query(Ticket).filter(
-        Ticket.id == ticket_id,
-        Ticket.owner_id == current_user.id
-    ).first()
+    ticket = (
+        db.query(Ticket)
+        .filter(Ticket.id == ticket_id, Ticket.owner_id == current_user.id)
+        .first()
+    )
 
     if not ticket:
         raise HTTPException(

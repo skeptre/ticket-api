@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from app.config import settings
 from app.models import Base
@@ -7,8 +7,10 @@ from app.models import Base
 # Create engine
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {},
-    echo=settings.DEBUG
+    connect_args={"check_same_thread": False}
+    if "sqlite" in settings.DATABASE_URL
+    else {},
+    echo=settings.DEBUG,
 )
 
 # Create session factory

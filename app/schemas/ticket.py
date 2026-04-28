@@ -5,7 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 # Import enums from models to avoid duplication
-from app.models.ticket import TicketStatus, TicketPriority
+from app.models.ticket import TicketPriority, TicketStatus
 
 
 # Schema used when a client creates a new ticket
