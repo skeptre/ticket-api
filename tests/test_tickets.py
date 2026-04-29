@@ -52,7 +52,7 @@ def test_get_ticket_by_id(client, auth_headers):
     ticket_id = create_response.json()["id"]
 
     # Then get it
-    response = client.get(f"/tickets/{ticket_id}")
+    response = client.get(f"/tickets/{ticket_id}", headers=auth_headers)
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == ticket_id
@@ -110,5 +110,5 @@ def test_delete_ticket(client, auth_headers):
     assert response.status_code == 204
 
     # Verify it's gone
-    get_response = client.get(f"/tickets/{ticket_id}")
+    get_response = client.get(f"/tickets/{ticket_id}", headers=auth_headers)
     assert get_response.status_code == 404
